@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RPG Chat App - System Overview</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="bg-dark">
+  <div class="container">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <h1 class="sidebar-title">RPG Chat App</h1>
+      <ul class="sidebar-menu">
+        <li><a href="#" class="menu-item active" data-section="user">ระบบผู้ใช้</a></li>
+        <li><a href="#" class="menu-item" data-section="character">ระบบตัวละคร</a></li>
+        <li><a href="#" class="menu-item" data-section="chat">ระบบแชท</a></li>
+        <li><a href="#" class="menu-item" data-section="inventory">ระบบอาวุธ/ไอเท็ม</a></li>
+        <li><a href="#" class="menu-item" data-section="market">ระบบตลาด</a></li>
+        <li><a href="#" class="menu-item" data-section="quest">ระบบเควส</a></li>
+        <li><a href="#" class="menu-item" data-section="pk">ระบบ PK</a></li>
+        <li><a href="#" class="menu-item" data-section="event">ระบบ Event</a></li>
+        <li><a href="#" class="menu-item" data-section="admin">ระบบจัดการหลังบ้าน</a></li>
+        <li><a href="#" class="menu-item" data-section="database">ระบบฐานข้อมูล</a></li>
+        <li><a href="#" class="menu-item" data-section="ui">UI Design</a></li>
+      </ul>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <h2 id="section-title">ระบบผู้ใช้</h2>
+      <div id="section-content">
+        <p><strong>ฟังก์ชันหลัก:</strong></p>
+        <ul>
+          <li>สมัครสมาชิกด้วยอีเมลและรหัสผ่าน</li>
+          <li>ล็อกอินด้วย JWT</li>
+          <li>ดูและแก้ไขโปรไฟล์ (ชื่อ, อวตาร, bio)</li>
+        </ul>
+        <p><strong>หลักการทำงาน:</strong></p>
+        <p>ระบบผู้ใช้เป็นจุดเริ่มต้นของการโต้ตอบกับแอป ผู้ใช้สมัครสมาชิกโดยกรอกอีเมลและรหัสผ่าน ซึ่งรหัสผ่านจะถูกเข้ารหัสด้วย bcrypt เพื่อความปลอดภัย การล็อกอินจะสร้าง JWT token เพื่อยืนยันตัวตน และผู้ใช้สามารถแก้ไขข้อมูลส่วนตัว เช่น อวตารและ bio ได้ผ่านหน้าโปรไฟล์</p>
+        <p><strong>โค้ดตัวอย่าง:</strong></p>
+        <div class="code-container">
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+          <pre><code>
+// server/models/User.js
+const mongoose = require('mongoose');
+const bcrypt = require('bcryptjs');
+
+const userSchema = new mongoose.Schema({
+  email: { type: String, required: true, unique: true },
+  password: { type: String, required: true },
+  username: { type: String, required: true, unique: true },
+  avatar: { type: String, default: 'default-avatar.png' },
+  bio: { type: String, default: '' },
+});
+
+userSchema.pre('save', async function (next) {
+  if (this.isModified('password')) {
+    this.password = await bcrypt.hash(this.password, 10);
+  }
+  next();
+});
+
+module.exports = mongoose.model('User', userSchema);
+          </code></pre>
+        </div>
+      </div>
+    </main>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>
